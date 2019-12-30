@@ -1,0 +1,6 @@
+HelloWorldApp/app/libs/libpython3.7m.so.1.0 filter=lfs diff=lfs merge=lfs -text
+HelloWorldApp/app/libs/rubicon.jar filter=lfs diff=lfs merge=lfs -text
+HelloWorldApp/app/libs/x86_64/libpython3.7m.so.1.0 filter=lfs diff=lfs merge=lfs -text
+HelloWorldApp/app/libs/x86_64/librubicon.so filter=lfs diff=lfs merge=lfs -text
+HelloWorldApp/app/libs/x86_64/libpython3.7m.so filter=lfs diff=lfs merge=lfs -text
+HelloWorldApp/app/libs/librubicon.so filter=lfs diff=lfs merge=lfs -text
