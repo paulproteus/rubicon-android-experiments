@@ -1,4 +1,4 @@
-export HOST_TAG=linux-x86_64
+export HOST_TAG="$(ls -1 $NDK/toolchains/llvm/prebuilt | head -n1)"
 export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/$HOST_TAG
 export TARGET=x86_64-linux-android
 export ANDROID_SDK_VERSION=29
