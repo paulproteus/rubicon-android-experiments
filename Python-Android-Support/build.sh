@@ -24,6 +24,14 @@ make
 make install
 cd ..
 
-# Copy it into the app
+# Copy the python .so into the app
 chmod u+w ../HelloWorldApp/app/libs/x86_64/*.so || true
 cp $PWD/Python-3.7.6/Python-3.7.6-built/lib/*.so ../HelloWorldApp/app/libs/x86_64
+
+# Tar up the 'built' directory, so the app can unpack it
+pushd $PWD/Python-3.7.6/Python-3.7.6-built
+ZIP_OUTPUT="$(mktemp -t python-tarball -d)/pythonhome.zip"
+zip -r "$ZIP_OUTPUT" .
+popd
+
+cp "$ZIP_OUTPUT" ../HelloWorldApp/app/src/main/assets/pythonhome.zip
