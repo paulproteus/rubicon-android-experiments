@@ -20,14 +20,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val storagePermission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val storagePermission = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 
         System.loadLibrary("python3.7m")
         System.loadLibrary("rubicon")
 
         // Get asset
-        val destDir = applicationContext.externalCacheDir!!;
-        val zis = ZipInputStream(assets.open("pythonhome.png"))
+        val destDir = applicationContext.externalCacheDir!!
+        val zis = ZipInputStream(assets.open("pythonhome.zip"))
         var zipEntry = zis.nextEntry
         val buf = ByteArray(1024)
         while (zipEntry != null) {
@@ -52,11 +55,13 @@ class MainActivity : AppCompatActivity() {
         Os.setenv("PYTHONHOME", applicationContext.externalCacheDir!!.absolutePath, true)
 
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                storagePermission, 1);
+            ActivityCompat.requestPermissions(
+                this,
+                storagePermission, 1
+            )
 
         } else {
-            Log.v("LOG-TAG:D","Permission is granted");
+            Log.v("LOG-TAG:D", "Permission is granted")
             // val paths: Stream<Path>  = Files.walk(Paths.get("/"))
             // paths.forEach(System.out::println)
             if (true) {
@@ -67,7 +72,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 Log.w("hi", "hello, python is alive")
                 // TODO: Call Python.eval() but no such function exists, rofl.
-                Python.run(applicationContext.externalCacheDir!!.absolutePath + "/lib/python3.7/pydoc.py", arrayOf())
+                Python.run(
+                    applicationContext.externalCacheDir!!.absolutePath + "/lib/python3.7/pydoc.py",
+                    arrayOf()
+                )
                 Log.w("hi", "hello, python is alive and ran pydoc3")
             }
         }
