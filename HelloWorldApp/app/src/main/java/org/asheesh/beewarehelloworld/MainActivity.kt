@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             applicationContext.dataDir!!.absolutePath,
             true
         )
+        Os.setenv("RUBICON_LIBRARY", applicationInfo.nativeLibraryDir + "/librubicon.so", true)
         Log.v(
             "python home",
             applicationContext.dataDir!!.absolutePath
