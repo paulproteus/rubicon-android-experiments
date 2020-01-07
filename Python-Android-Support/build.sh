@@ -38,11 +38,6 @@ cd ..
 chmod u+w ../HelloWorldApp/app/libs/x86_64/*.so || true
 cp $PWD/Python-3.7.6/Python-3.7.6-built/lib/*.so ../HelloWorldApp/app/libs/x86_64
 
-# Copy the compiled Python stdlib components into the app's libs/ directory,
-# so that the app is allowed to dlopen() them.
-mkdir -p ../HelloWorldApp/app/src/main/assets/pythonhome-bin/
-cp -a $PWD/Python-3.7.6/Python-3.7.6-built/lib/python3.7/lib-dynload/ ../HelloWorldApp/app/libs/x86_64
-
 # Copy the rubicon Python module in, so that rubicon-java can start.
 rm -rf $PWD/Python-3.7.6/Python-3.7.6-built/lib/python3.7/rubicon
 cp -a $PWD/../../../beeware/rubicon-java/rubicon $PWD/Python-3.7.6/Python-3.7.6-built/lib/python3.7/
@@ -50,11 +45,10 @@ cp -a $PWD/../../../beeware/rubicon-java/rubicon $PWD/Python-3.7.6/Python-3.7.6-
 # Add our hello-world thing
 printf 'import cmath\nprint("hello, world, small number", cmath.sin(6.28))' > $PWD/Python-3.7.6/Python-3.7.6-built/lib/helloworld.py
 
-# Zip up the architecture-independent parts of the Python stdlib, so the Android
-# app can unpack it at startup.
+# Zip up the Python stdlib, so the Android app can unpack it at startup.
 pushd $PWD/Python-3.7.6/Python-3.7.6-built
-ZIP_INDEP_OUTPUT="$(mktemp -t python-tarball -d)/pythonhome-arch-indep.zip"
-zip -r "$ZIP_INDEP_OUTPUT" . -x '*.so' -x '*.so.*' -x '*.a'
+STDLIB_ZIP="$(mktemp -t python-tarball -d)/pythonhome-arch-indep.zip"
+zip -r "$STDLIB_ZIP" .
 popd
 
-cp "$ZIP_INDEP_OUTPUT" ../HelloWorldApp/app/src/main/assets/pythonhome.zip
+cp "$STDLIB_ZIP" ../HelloWorldApp/app/src/main/assets/pythonhome.zip
