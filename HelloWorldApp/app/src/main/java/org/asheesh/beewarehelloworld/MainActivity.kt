@@ -11,6 +11,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.beeware.rubicon.Python
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.stream.Stream
 import java.util.zip.ZipInputStream
 
 
@@ -27,9 +31,10 @@ class MainActivity : AppCompatActivity() {
 
         System.loadLibrary("python3.7m")
         System.loadLibrary("rubicon")
+        System.loadLibrary("ffi")
 
         // Get asset
-        val destDir = applicationContext.externalCacheDir!!
+        val destDir = applicationContext.dataDir
         val zis = ZipInputStream(assets.open("pythonhome.zip"))
         var zipEntry = zis.nextEntry
         val buf = ByteArray(1024)
@@ -52,7 +57,15 @@ class MainActivity : AppCompatActivity() {
         zis.closeEntry()
         zis.close()
         // Unpack Python into cache directory -- use applicationContext.externalCacheDir
-        Os.setenv("PYTHONHOME", applicationContext.externalCacheDir!!.absolutePath, true)
+        Os.setenv(
+            "PYTHONHOME",
+            applicationContext.dataDir!!.absolutePath,
+            true
+        )
+        Log.v(
+            "python home",
+            applicationContext.dataDir!!.absolutePath
+        )
 
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -62,8 +75,12 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             Log.v("LOG-TAG:D", "Permission is granted")
-            // val paths: Stream<Path>  = Files.walk(Paths.get("/"))
-            // paths.forEach(System.out::println)
+            val paths: Stream<Path> = Files.walk(
+                Paths.get(applicationInfo.nativeLibraryDir)
+            )
+            paths.forEach {
+                Log.v("found lib pythong", it.toString())
+            }
             if (true) {
                 val pythonStart = Python.init(null, ".", null)
                 if (pythonStart > 0) {
@@ -73,10 +90,10 @@ class MainActivity : AppCompatActivity() {
                 Log.w("hi", "hello, python is alive")
                 // TODO: Call Python.eval() but no such function exists, rofl.
                 Python.run(
-                    applicationContext.externalCacheDir!!.absolutePath + "/lib/python3.7/pydoc.py",
+                    applicationContext.dataDir!!.absolutePath + "/lib/helloworld.py",
                     arrayOf()
                 )
-                Log.w("hi", "hello, python is alive and ran pydoc3")
+                Log.w("hi", "hello, python is alive and ran hello world")
             }
         }
 
