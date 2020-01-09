@@ -48,6 +48,8 @@ cp -a $RUBICON_JAVA_PATH/rubicon $PWD/Python-3.7.6/Python-3.7.6-built/lib/python
 
 # Add our hello-world thing
 printf 'import cmath\nprint("hello, world, small number", cmath.sin(6.28))' > $PWD/Python-3.7.6/Python-3.7.6-built/lib/helloworld.py
+# Add a Python unit test runner
+printf 'from test import autotest\n' > $PWD/Python-3.7.6/Python-3.7.6-built/lib/testme.py
 
 # Zip up the Python stdlib, so the Android app can unpack it at startup.
 pushd $PWD/Python-3.7.6/Python-3.7.6-built

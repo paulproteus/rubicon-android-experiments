@@ -15,6 +15,8 @@ RUN wget -q https://github.com/libffi/libffi/releases/download/v3.3/libffi-3.3.t
 RUN sed -i -e s,'libraries or \[\],\["python3.7m"] + libraries if libraries else \["python3.7m"\],' Python-3.7.6/Lib/distutils/extension.py
 # Apply a hack to get the NDK library paths into the Python build. TODO(someday): Discuss with e.g. Kivy and see how to remove this.
 RUN sed -i -e "s# dirs = \[\]# dirs = \[os.environ.get('NDK') + \"/sysroot/usr/include\", os.environ.get('TOOLCHAIN') + \"/sysroot/usr/lib/\" + os.environ.get('TARGET') + '/' + os.environ.get('ANDROID_SDK_VERSION')\]#" Python-3.7.6/setup.py
+# Apply a hack make platform.py stop looking for a libc version.
+RUN sed -i -e "s#Linux#DisabledLinuxCheck#" Python-3.7.6/Lib/platform.py
 # Apply a hack to pylifecycle.c that injects a thread that send stdout/stderr to Android logging.
 RUN wget -q https://gist.githubusercontent.com/paulproteus/61c7eac39da079f014f40f9a52ef87f8/raw/925468444357a0d56dc05e072a7ec3cb1049ed39/pylifecycle.c -O Python-3.7.6/Python/pylifecycle.c
 ENV RUBICON_JAVA_PATH /opt/python-build/rubicon-java
