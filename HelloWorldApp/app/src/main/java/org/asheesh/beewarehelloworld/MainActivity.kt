@@ -35,8 +35,14 @@ class MainActivity : AppCompatActivity() {
         System.loadLibrary("rubicon")
         //System.loadLibrary("ffi")
 
-        if (true) {
+        if (false) {
             // Experiment with launching Python manually
+            // Seemingly stuck on SELinux execute_no_trans denied
+            Os.setenv(
+                "PYTHONHOME",
+                applicationContext.dataDir!!.absolutePath,
+                true
+            )
             val python = File(applicationContext.dataDir!!.absolutePath + "/bin/python3.7")
             if (python.exists()) {
                 python.setExecutable(true)
@@ -60,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             )
             println("pythonpath = $pythonPath")
             val shellCode =
-                "cd " + applicationContext.dataDir!!.absolutePath + "/bin ; " + "LD_LIBRARY_PATH=" + applicationContext.dataDir!!.absolutePath + "/lib" + " ./python3.7 -V"
+                "cd " + applicationContext.dataDir!!.absolutePath + "/bin ; LD_LIBRARY_PATH=" + applicationContext.dataDir!!.absolutePath + "/lib" + " runcon -r object_r -t app_data_file ./python3.7 -V 2>&1"
             println("shellCode = $shellCode")
             val cmdArray =
                 arrayOf(
@@ -96,10 +102,9 @@ class MainActivity : AppCompatActivity() {
             val destDir = applicationContext.dataDir
             val zis = ZipInputStream(assets.open("pythonhome-arch-indep.zip"))
             var zipEntry = zis.nextEntry
-            val buf = ByteArray(1024)
+            val buf = ByteArray(1024 * 1024 * 4)
             while (zipEntry != null) {
                 val outputFile = File(destDir.absolutePath + "/" + zipEntry)
-                System.out.println(outputFile)
                 if (zipEntry.isDirectory) {
                     outputFile.mkdirs()
                     zipEntry = zis.nextEntry
