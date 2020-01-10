@@ -6,7 +6,12 @@ LEADING_SPACES_RE = re.compile("^( +)")
 
 def fix(filename):
     with open(filename) as fd:
-        contents = fd.read()
+        try:
+            contents = fd.read()
+        except UnicodeDecodeError:
+            # We're going to hope that we don't have to process
+            # any non-UTF-8 files.
+            return
 
     matching_lines = []
     splitted = contents.split("\n")
@@ -28,9 +33,11 @@ def fix(filename):
         if i in matching_lines:
             # Find indent level
             num_spaces = len(LEADING_SPACES_RE.match(line).group(0))
-            out_lines.append(
+            line = (
                 " " * num_spaces
                 + 'raise unittest.SkipTest("Skipping because subprocess not available")'
+                + "\n"
+                + line
             )
         out_lines.append(line)
 
